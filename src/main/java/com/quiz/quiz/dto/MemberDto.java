@@ -2,6 +2,7 @@ package com.quiz.quiz.dto;
 
 import com.quiz.quiz.entity.Member;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class MemberDto {
     @NotBlank(message = "아이디은 반드시 입력하셔야 합니다.")
     private String id;
+    @NotBlank(message = "비밀번호는 반드시 입력하셔야 합니다.")
     private String password;
     private boolean status;
 

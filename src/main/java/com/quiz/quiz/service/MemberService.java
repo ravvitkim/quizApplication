@@ -3,6 +3,7 @@ package com.quiz.quiz.service;
 import com.quiz.quiz.dto.MemberDto;
 import com.quiz.quiz.entity.Member;
 import com.quiz.quiz.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -41,4 +42,16 @@ public class MemberService {
         }
         return MemberDto.fromMemberEntity(entity);
     }
+
+    @Transactional
+    public void toggleStatus(String id) {
+        Member member = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다: " + id));
+
+        // 현재 상태 반전
+        member.setStatus(!member.isStatus());
+
+        // 저장은 JPA가 트랜잭션 커밋 시 자동으로 처리 (dirty checking)
+    }
+
 }

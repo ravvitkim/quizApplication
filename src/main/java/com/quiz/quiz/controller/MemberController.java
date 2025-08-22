@@ -27,7 +27,7 @@ public class MemberController {
         model.addAttribute("title", "리스트보기");
         List<MemberDto> memberList = memberService.getAllList();
         model.addAttribute("list", memberList);
-        return "showMember";
+        return "user/memberList";
     }
 
     // 회원가입 폼
@@ -40,7 +40,8 @@ public class MemberController {
     // 회원가입 처리
     @PostMapping("/signup")
     public String signup(@ModelAttribute("member") MemberDto dto) {
-        memberService.saveMember(dto);  // 메서드명 통일됨
+        System.out.println("회원가입 요청됨: " + dto);
+        memberService.saveMember(dto);
         return "redirect:/";
     }
 
@@ -57,19 +58,24 @@ public class MemberController {
         if (loginResult == null) {
             return "user/login";
         } else if (dto.getPassword().equals(loginResult.getPassword())) {
-            session.setAttribute("loginEmail", dto.getId());
+            session.setAttribute("loginEmail", loginResult.getId());
+            session.setAttribute("loginStatus", loginResult.isStatus());
             session.setMaxInactiveInterval(60 * 30);
-            return "redirect:/";
+            if ("root".equals(dto.getId()) && "admin".equals(dto.getPassword())) {
+                return "redirect:/list";
+            } else {
+                return "redirect:/quiz/play";
+            }
         } else {
             return "user/login";
         }
     }
 
     // 로그아웃
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "main";
+        return "redirect:/";
     }
 
     // 내 정보 보기
@@ -104,4 +110,19 @@ public class MemberController {
         memberService.deleteMember(id);
         return "redirect:/list";
     }
+
+
+// 관리
+    @PostMapping("/user/toggleStatus")
+    public String toggleStatus(@RequestParam("id") String id, HttpSession session) {
+        String loginId = (String) session.getAttribute("loginEmail");
+
+        // 로그인한 사용자가 "admin"이 아니라면 거부
+        if (!"admin".equals(loginId)) {
+            return "redirect:/";
+        }
+        memberService.toggleStatus(id);
+        return "redirect:/list";
+    }
+
 }

@@ -3,6 +3,7 @@ package com.quiz.quiz.controller;
 import com.quiz.quiz.dto.QuizDto;
 import com.quiz.quiz.entity.Quiz;
 import com.quiz.quiz.service.QuizService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -71,10 +73,19 @@ public class QuizController {
     }
 
     @GetMapping("/play")
-    public String playQuiz(Model model) {
+    public String playQuiz(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+        Boolean status = (Boolean) session.getAttribute("loginStatus");
+
+        if (status == null || !status) {
+            redirectAttributes.addFlashAttribute("errorMessage", "승인된 사용자만 퀴즈를 플레이할 수 있습니다.");
+            return "redirect:/login";
+        }
+
         model.addAttribute("quiz", service.getRandomQuiz());
         return "quiz/play";
     }
+
+
 
 
     @PostMapping("/check")

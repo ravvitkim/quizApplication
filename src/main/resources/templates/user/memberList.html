@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 리스트</title>
+</head>
+<body align="center">
+<p>현재 로그인된 ID: <span th:text="${session.loginEmail}"></span></p>
+
+<!-- 관리자만 회원 리스트와 승인 버튼을 볼 수 있도록 -->
+<div th:if="${session.loginEmail} == 'root'">
+
+  <h1>회원 리스트 보기</h1>
+  <table border="1" align="center">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>PW</th>
+      <th>승인</th>
+      <th>수정</th>
+      <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${list} == null">
+      <td colspan="5">데이터가 없습니다.</td>
+    </tr>
+    <tr th:each="member : ${list}" th:object="${member}">
+      <td th:text="*{id}"></td>
+      <td th:text="*{password}"></td>
+      <td>
+        <form th:action="@{/user/toggleStatus}" method="post">
+          <input type="hidden" name="id" th:value="*{id}" />
+          <button type="submit" th:text="*{status} ? '승인' : '미승인'"></button>
+        </form>
+      </td>
+      <td>
+        <form th:action="@{/user/update}" method="post">
+          <input type="hidden" name="id" th:value="*{id}" />
+          <input type="submit" value="수정" />
+        </form>
+      </td>
+      <td>
+        <form th:action="@{/user/delete}" method="post">
+          <input type="hidden" name="id" th:value="*{id}" />
+          <input type="submit" value="삭제" />
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
+<form th:action="@{/logout}" method="post"><button>로그아웃</button></form>
+<a th:href="@{/}">메인화면</a>
+
+</body>
+</html>
