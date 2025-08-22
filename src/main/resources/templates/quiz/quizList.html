@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">Title</title>
+</head>
+<body align="center">
+<h1>
+    등록된 퀴즈 목록
+    <span><a th:href="@{/quiz/play}">플레이</a></span>
+</h1>
+<table border="1" align="center">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>내용</th>
+        <th>해답</th>
+        <th>작성자</th>
+        <th>변경</th>
+        <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${#lists.isEmpty(quiz)}">
+        <td colspan="6">데이터가 없습니다.</td>
+    </tr>
+    <tr th:each="item : ${quiz}" th:object="${item}">
+        <td th:text="*{id}">1</td>
+        <td th:text="*{content}">퀴즈내용</td>
+        <td th:text="*{answer}">정답</td>
+        <td th:text="*{master}">토끼</td>
+        <td>
+            <a th:href="@{/quiz/{id}(id=*{id})}">
+                <input type="submit" value="변경">
+            </a>
+
+        </td>
+        <td>
+            <form th:action="@{/quiz/delete}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                <input type="hidden" name="id" th:value="*{id}">
+                <input type="submit" value="삭제">
+            </form>
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<a th:href="@{/}">메인페이지로 이동</a>
+</body>
+</html>

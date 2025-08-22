@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>수정화면</title>
+</head>
+<body>
+<form th:action="@{/quiz/update}" method="post" th:object="${quiz}">
+    <h3>수정 폼</h3>
+    <input type="hidden" th:field="*{id}">
+    <div>
+        <label for="content" style="display: block;">퀴즈 내용:</label>
+        <textarea name="content" th:field="*{content}" rows="4" cols="50"></textarea>
+        <span th:errors="*{content}" style="font-size:10; color:red"></span>
+    </div>
+    <div>
+        <label>퀴즈 정답:</label>
+
+        <input type="radio" id="answerTrue"  th:field="*{answer}" value="true">
+        <label for="answerTrue">O</label>
+
+        <input type="radio" id="answerFalse" th:field="*{answer}" value="false">
+        <label for="answerFalse">X</label>
+
+        <span th:errors="*{answer}" style="font-size:10px; color:red"></span>
+    </div>
+
+    <div>
+        <label for="master">작성자:</label>
+        <input type="text" th:field="*{master}">
+        <span th:errors="*{master}" style="font-size:10; color:red"></span>
+    </div>
+    <div>
+        <input type="submit" value="수정완료">
+    </div>
+<a th:href="@{/}">메인페이지로 이동</a>
+</form>
+</body>
+</html>

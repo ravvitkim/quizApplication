@@ -1,0 +1,12 @@
+package com.quiz.quiz.repository;
+
+import com.quiz.quiz.entity.Play;
+import com.quiz.quiz.entity.Quiz;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+
+public interface PlayRepository extends JpaRepository<Play, Long> {
+
+}
