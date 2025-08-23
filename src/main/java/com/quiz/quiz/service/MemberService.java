@@ -55,4 +55,12 @@ public class MemberService {
     }
 
 
+    @Transactional
+    public void updatePassword(String id, String newPassword) {
+        Member member = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다: " + id));
+        member.setPassword(newPassword);
+        // member.setStatus(...)는 건드리지 않음
+    }
+
 }

@@ -55,25 +55,25 @@ public class MemberController {
         if (loginResult == null) {
             return "user/login";
         } else if (dto.getPassword().equals(loginResult.getPassword())) {
+            // 세션 갱신
             session.setAttribute("loginEmail", loginResult.getId());
             session.setAttribute("loginStatus", loginResult.isStatus());
             session.setMaxInactiveInterval(60 * 30);
 
-            // 관리자 로그인
             if ("root".equals(dto.getId()) && "admin".equals(dto.getPassword())) {
                 return "redirect:/list";
             }
 
-            // 일반 유저 status 체크
             if (!loginResult.isStatus()) {
                 return "redirect:/wait";  // 승인 대기 화면
             } else {
-                return "redirect:/quiz/play";  // 승인 완료 → 플레이 화면
+                return "redirect:/quiz/play";  // 승인 완료
             }
         } else {
             return "user/login";
         }
     }
+
 
 
     // 로그아웃
@@ -95,7 +95,7 @@ public class MemberController {
     }
 
     // 회원 수정 폼
-    @PostMapping("/update")
+    @GetMapping("/update")
     public String updateUserForm(@RequestParam("id") String id, Model model) {
         MemberDto member = memberService.findOneMember(id);
         model.addAttribute("member", member);
@@ -104,10 +104,23 @@ public class MemberController {
 
     // 회원 수정 처리
     @PostMapping("/updateUser")
-    public String updateUser(@ModelAttribute("member") MemberDto member) {
-        memberService.saveMember(member);  // 통일된 메서드명 사용
+    public String updateUser(@RequestParam("id") String id,
+                             @RequestParam("password") String newPassword,
+                             HttpSession session) {
+
+        memberService.updatePassword(id, newPassword);
+
+        // 로그인한 유저라면 세션 갱신
+        String loginId = (String) session.getAttribute("loginEmail");
+        if (loginId != null && loginId.equals(id)) {
+            MemberDto updated = memberService.findOneMember(id);
+            session.setAttribute("loginStatus", updated.isStatus()); // status 그대로
+        }
+
         return "redirect:/list";
     }
+
+
 
     // 회원 삭제
     @PostMapping("/delete")
