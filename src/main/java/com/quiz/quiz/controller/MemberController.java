@@ -5,10 +5,7 @@ import com.quiz.quiz.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -61,15 +58,23 @@ public class MemberController {
             session.setAttribute("loginEmail", loginResult.getId());
             session.setAttribute("loginStatus", loginResult.isStatus());
             session.setMaxInactiveInterval(60 * 30);
+
+            // 관리자 로그인
             if ("root".equals(dto.getId()) && "admin".equals(dto.getPassword())) {
                 return "redirect:/list";
+            }
+
+            // 일반 유저 status 체크
+            if (!loginResult.isStatus()) {
+                return "redirect:/wait";  // 승인 대기 화면
             } else {
-                return "redirect:/quiz/play";
+                return "redirect:/quiz/play";  // 승인 완료 → 플레이 화면
             }
         } else {
             return "user/login";
         }
     }
+
 
     // 로그아웃
     @PostMapping("/logout")
@@ -113,16 +118,25 @@ public class MemberController {
 
 
 // 관리
-    @PostMapping("/user/toggleStatus")
-    public String toggleStatus(@RequestParam("id") String id, HttpSession session) {
-        String loginId = (String) session.getAttribute("loginEmail");
+@PostMapping("/user/toggleStatus")
+@ResponseBody
+public String toggleStatus(@RequestParam("id") String id, HttpSession session) {
+    String loginId = (String) session.getAttribute("loginEmail");
 
-        // 로그인한 사용자가 "admin"이 아니라면 거부
-        if (!"admin".equals(loginId)) {
-            return "redirect:/";
-        }
-        memberService.toggleStatus(id);
-        return "redirect:/list";
+    // root만 승인 가능
+    if (!"root".equals(loginId)) {
+        return "unauthorized";
     }
+
+    try {
+        memberService.toggleStatus(id);
+        return "success";
+    } catch (Exception e) {
+        return "fail";
+    }
+}
+
+
+
 
 }

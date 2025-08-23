@@ -28,12 +28,19 @@
     <tr th:each="member : ${list}" th:object="${member}">
       <td th:text="*{id}"></td>
       <td th:text="*{password}"></td>
-      <td>
-        <form th:action="@{/user/toggleStatus}" method="post">
-          <input type="hidden" name="id" th:value="*{id}" />
-          <button type="submit" th:text="*{status} ? '승인' : '미승인'"></button>
-        </form>
-      </td>
+        <td>
+            <button type="button"
+                    class="approve-btn"
+                    th:data-id="*{id}"
+                    th:text="*{status} ? '승인' : '미승인'"></button>
+        </td>
+
+        <!--      <td>-->
+<!--        <form th:action="@{/user/toggleStatus}" method="post">-->
+<!--          <input type="hidden" name="id" th:value="*{id}" />-->
+<!--          <button type="submit" th:text="*{status} ? '승인' : '미승인'"></button>-->
+<!--        </form>-->
+<!--      </td>-->
       <td>
         <form th:action="@{/user/update}" method="post">
           <input type="hidden" name="id" th:value="*{id}" />
@@ -53,6 +60,31 @@
 </div>
 <form th:action="@{/logout}" method="post"><button>로그아웃</button></form>
 <a th:href="@{/}">메인화면</a>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".approve-btn").forEach(button => {
+        button.addEventListener("click", () => {
+          const memberId = button.getAttribute("data-id");
+
+          fetch("/user/toggleStatus?id=" + memberId, {
+            method: "POST"
+          })
+          .then(res => res.text())
+          .then(result => {
+            if (result === "success") {
+              // 버튼 텍스트 토글
+              button.textContent = (button.textContent === "승인") ? "미승인" : "승인";
+            } else if (result === "unauthorized") {
+              alert("권한이 없습니다.");
+            } else {
+              alert("승인 처리 실패");
+            }
+          })
+          .catch(err => alert("서버 오류: " + err));
+        });
+      });
+    });
+</script>
 
 </body>
 </html>
