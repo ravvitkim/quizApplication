@@ -83,16 +83,16 @@ public class MemberController {
         return "redirect:/";
     }
 
-    // 내 정보 보기
-    @GetMapping("/myInfo")
-    public String myInfo(HttpSession session, Model model) {
-        String myEmail = (String) session.getAttribute("loginEmail");
-        if (myEmail == null) return "redirect:/login";
-
-        MemberDto member = memberService.findOneMember(myEmail);
-        model.addAttribute("member", member);
-        return "user/myInfo";
-    }
+//    // 내 정보 보기
+//    @GetMapping("/myInfo")
+//    public String myInfo(HttpSession session, Model model) {
+//        String myEmail = (String) session.getAttribute("loginEmail");
+//        if (myEmail == null) return "redirect:/login";
+//
+//        MemberDto member = memberService.findOneMember(myEmail);
+//        model.addAttribute("member", member);
+//        return "user/myInfo";
+//    }
 
     // 회원 수정 폼
     @GetMapping("/update")

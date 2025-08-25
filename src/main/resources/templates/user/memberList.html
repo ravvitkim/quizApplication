@@ -34,13 +34,6 @@
                     th:data-id="*{id}"
                     th:text="*{status} ? '승인' : '미승인'"></button>
         </td>
-
-        <!--      <td>-->
-<!--        <form th:action="@{/user/toggleStatus}" method="post">-->
-<!--          <input type="hidden" name="id" th:value="*{id}" />-->
-<!--          <button type="submit" th:text="*{status} ? '승인' : '미승인'"></button>-->
-<!--        </form>-->
-<!--      </td>-->
       <td>
         <form th:action="@{/update}" method="get">
           <input type="hidden" name="id" th:value="*{id}" />

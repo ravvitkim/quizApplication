@@ -10,10 +10,15 @@
     <li><a th:href="@{/quiz}">퀴즈목록</a></li>
     <li><a th:href="@{/quiz/insertForm}">퀴즈등록</a></li>
 
+
     <!-- 로그인 한 사용자만 보임 -->
     <li th:if="${session.loginEmail != null}">
         <a th:href="@{/quiz/play}">퀴즈풀이화면</a>
         <form th:action="@{/logout}" method="post"><button>로그아웃</button></form>
+    </li>
+<!--    관리자만 플레이기록 볼수있게-->
+    <li th:if="${session.loginEmail == 'root'}">
+        <a th:href="@{/playList}">플레이한 기록</a>
     </li>
 
     <!-- 로그인/회원가입 메뉴 (비로그인 상태에서만 보이도록) -->
