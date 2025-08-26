@@ -50,7 +50,7 @@ public class MemberService {
 
         // 관리자 본인은 상태 변경 안 함
         if (!"root".equals(member.getId())) {
-            member.setStatus(!member.isStatus()); // 승인/취소 토글
+            member.setStatus(!member.isStatus()); // 승인/미승인
         }
     }
 

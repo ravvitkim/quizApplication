@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -32,15 +33,21 @@ public class PlayController {
     }
 
     @PostMapping("/play/save")
-    public String savePlay(@ModelAttribute PlayDto dto, HttpSession session) {
-        String loginId = (String) session.getAttribute("loginEmail");
-        if (loginId == null) {
-            return "redirect:/login";
-        }
-        dto.setMemberId(loginId);
+    public String savePlay(@RequestParam Long totalAnswerTrue,
+                           @RequestParam Long totalAnswerFalse,
+                           HttpSession session) {
+        String memberId = (String) session.getAttribute("loginEmail");
+
+        PlayDto dto = new PlayDto();
+        dto.setMemberId(memberId);
+        dto.setTotalAnswerTrue(totalAnswerTrue);
+        dto.setTotalAnswerFalse(totalAnswerFalse);
+
         playService.savePlay(dto);
-        return "redirect:/playList";
+
+        return "redirect:/playMember";
     }
+
 
 
 
