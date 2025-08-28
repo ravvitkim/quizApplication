@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface PlayRepository extends JpaRepository<Play, Long> {
     List<Play> findByMemberId(String memberId);
-    Optional<Play> findTopByMemberIdOrderByDateTimeDesc();
+    Optional<Play> findTopByMemberIdOrderByDateTimeDesc(String memberId);
 }
