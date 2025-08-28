@@ -28,12 +28,14 @@
     <tr th:each="member : ${list}" th:object="${member}">
       <td th:text="*{id}"></td>
       <td th:text="*{password}"></td>
-        <td>
-            <button type="button"
-                    class="approve-btn"
-                    th:data-id="*{id}"
-                    th:text="*{status} ? '승인' : '미승인'"></button>
-        </td>
+      <td>
+        <button type="button"
+                class="approve-btn"
+                th:if="*{id} != 'root'"
+                th:data-id="*{id}"
+                th:text="*{status} ? '승인' : '미승인'"></button>
+      </td>
+
       <td>
         <form th:action="@{/update}" method="get">
           <input type="hidden" name="id" th:value="*{id}" />

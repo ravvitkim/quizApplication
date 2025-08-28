@@ -23,7 +23,7 @@
     <tr th:each="item, stat : ${list}" th:object="${item}">
         <td th:text="${stat.count}"></td>
         <td th:text="*{memberId}"></td>
-        <td th:text="*{dateTime}"></td>
+        <td th:text="*{#temporals.format(dateTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
         <td th:text="*{totalAnswerTrue}"></td>
         <td th:text="*{totalAnswerFalse}"></td>
     </tr>

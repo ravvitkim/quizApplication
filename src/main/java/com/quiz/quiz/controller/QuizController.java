@@ -2,6 +2,7 @@ package com.quiz.quiz.controller;
 
 import com.quiz.quiz.dto.PlayDto;
 import com.quiz.quiz.dto.QuizDto;
+import com.quiz.quiz.entity.Play;
 import com.quiz.quiz.entity.Quiz;
 import com.quiz.quiz.service.PlayService;
 import com.quiz.quiz.service.QuizService;
@@ -101,30 +102,30 @@ public class QuizController {
         boolean result = service.checkAnswer(quizId, answer);
         model.addAttribute("result", result);
 
-        // 로그인한 회원 ID 가져오기
         String memberId = (String) session.getAttribute("loginEmail");
+
         if (memberId != null) {
-            // 기존 플레이 기록 조회
-            List<PlayDto> playList = playService.getAllList();
-
-            // 누적값 계산 (없으면 0으로 초기화)
-            long totalTrue = playList.stream()
-                    .mapToLong(p -> p.getTotalAnswerTrue() != null ? p.getTotalAnswerTrue() : 0L)
-                    .sum();
-            long totalFalse = playList.stream()
-                    .mapToLong(p -> p.getTotalAnswerFalse() != null ? p.getTotalAnswerFalse() : 0L)
-                    .sum();
-
-            // 이번 결과를 누적해서 저장
+            // 1. 이번 플레이 결과 저장
             PlayDto newPlay = new PlayDto();
             newPlay.setMemberId(memberId);
-            newPlay.setTotalAnswerTrue(totalTrue + (result ? 1 : 0));
-            newPlay.setTotalAnswerFalse(totalFalse + (result ? 0 : 1));
-            playService.savePlay(newPlay);
+            newPlay.setTotalAnswerTrue(result ? 1L : 0L);
+            newPlay.setTotalAnswerFalse(result ? 0L : 1L);
+            playService.savePlay(newPlay); // 매번 새로 저장
+
+            // 2. 전체 플레이 기록 가져오기
+            List<Play> playList = playService.getAllByMemberId(memberId); // ← 이 메서드가 있어야 함
+
+            // 3. 누적 정답 수 계산
+            long totalCorrect = playList.stream()
+                    .mapToLong(Play::getTotalAnswerTrue)
+                    .sum();
+
+            model.addAttribute("totalCorrect", totalCorrect);
         }
 
         return "quiz/result";
     }
+
 
 
 

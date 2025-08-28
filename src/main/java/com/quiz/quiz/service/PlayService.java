@@ -25,32 +25,18 @@ public class PlayService {
 
 
     public PlayDto savePlay(PlayDto dto) {
-        System.out.println("Play 저장 요청 dto = " + dto);
-
-        if (dto.getTotalAnswerTrue() == null) {
-            dto.setTotalAnswerTrue(0L);
-        }
-        if (dto.getTotalAnswerFalse() == null) {
-            dto.setTotalAnswerFalse(0L);
-        }
-
-        List<Play> existingPlays = repository.findByMemberId(dto.getMemberId());
-        Play play;
-        if (existingPlays.isEmpty()) {
-            // 기존 기록 없으면 새로 생성
-            play = new Play();
-            play.setMemberId(dto.getMemberId());
-            play.setTotalAnswerTrue(0L);
-            play.setTotalAnswerFalse(0L);
-        } else {
-            play = existingPlays.get(existingPlays.size() - 1);
-        }
-        play.setTotalAnswerTrue(play.getTotalAnswerTrue() + dto.getTotalAnswerTrue());
-        play.setTotalAnswerFalse(play.getTotalAnswerFalse() + dto.getTotalAnswerFalse());
+        Play play = new Play();
+        play.setMemberId(dto.getMemberId());
+        play.setTotalAnswerTrue(dto.getTotalAnswerTrue()); // 이번 결과만
+        play.setTotalAnswerFalse(dto.getTotalAnswerFalse());
         play.setDateTime(LocalDateTime.now());
-        Play saved = repository.save(play);
-        return PlayDto.fromPlayEntity(saved);
+
+        return PlayDto.fromPlayEntity(repository.save(play));
     }
 
+
+    public List<Play> getAllByMemberId(String memberId) {
+        return repository.findByMemberId(memberId);
+    }
 
 }

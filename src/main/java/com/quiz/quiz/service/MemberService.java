@@ -48,7 +48,6 @@ public class MemberService {
         Member member = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다: " + id));
 
-        // 관리자 본인은 상태 변경 안 함
         if (!"root".equals(member.getId())) {
             member.setStatus(!member.isStatus()); // 승인/미승인
         }
@@ -60,7 +59,6 @@ public class MemberService {
         Member member = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다: " + id));
         member.setPassword(newPassword);
-        // member.setStatus(...)는 건드리지 않음
     }
 
 }
